@@ -1,0 +1,20 @@
+#server.port
+server:
+  port: 9001
+#spring.application.name
+spring:
+  application:
+    name: sca-member
+  #spring.cloud.nacos
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #实际项目这个位置要改成具体nacos所在机器的ip地址
+      config:
+        server-addr: localhost:8848
+        file-extension: yml #配置文件格式
+
+feign: #可选（建议配置，网络有延迟时可能会经常出现远程服务调用异常）
+  httpclient:
+    connection-timeout: 5000 #默认为2000
+    connection-timer-repeat: 3000

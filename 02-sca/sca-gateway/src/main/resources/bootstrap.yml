@@ -1,0 +1,40 @@
+server:
+  port: 9999
+spring:
+  application:
+    name: sca-gateway
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      routes: #这部分内容尝试写到配置中心， 一般服务不同会有不同的路由id
+        - id: router01
+          uri: lb://sca-member #基于服务名进行访问 lb指loadBalanced-fu负载均衡
+          predicates:
+              - Path=/sca/member/** #这里的*代表0或多个多层目录结构
+              - Method=POST
+          filters:  # gateway 作为一个入口处理所有请求 底层通过filter实现,过滤器用于修改请求和响应信息
+            - StripPrefix=1 #去掉url中path部分的第一部分内容（前面两个"/"及之间的内容，例如nacos）
+            #网管会将端口号后面的path路径中的第一层目录去掉，然后基于重定向方式去访问
+        - id: router02
+          uri: lb://sca-member
+          predicates:
+            - Path=/sca/member/**
+            - Method=GET
+          filters:
+            - StripPrefix=1
+    sentinel:
+      eager: true
+      transport:
+        dashboard: localhost:8180
+        port: 8719
+#        - id: router02
+#          uri: lb://sca-member
+#          predicates:
+#              - Path=/sca/member/doLogin
+#              - Method=POST
+#          filters:
+#              - StripPrefix=1
