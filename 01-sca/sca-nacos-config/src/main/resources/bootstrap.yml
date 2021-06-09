@@ -1,0 +1,20 @@
+server:
+  port: 8093
+spring:
+  application:
+    name: nacos-config
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        # 分组名
+        #group: DEFAULT_GROUP_51 # Group, default is DEFAULT_GROUP
+        # 配置中心文件扩展名
+        file-extension: yml #Configure the data format of the content,default to properties
+        # 命名空间
+        namespace: ec65a863-f3ce-43e8-9bb1-f2f79a622fc5
+        #共享配置
+        shared-configs[0]:
+          data-id: application-dev.yml
+          group: DEFAULT_GROUP
+          refresh: true #默认false

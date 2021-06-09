@@ -1,0 +1,28 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: nacos-consumer
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #从哪里去查找服务
+    sentinel:
+      transport:
+        port: 8099 #跟sentinel控制台交流的端口,随意指定一个未使用的端口即可
+        dashboard: localhost:8180 #指定sentinel控制台地址
+      eager: true #默认为false (当前服务启动时，是否与sentinel进行建立连接)
+      web-context-unify: false
+      datasource:
+        ds1: #名字自己随意定义（不要以数字开头，遵循标识符规则）
+          nacos:
+            ### nacos连接地址
+            server-addr: localhost:8848
+            ## nacos连接的分组
+            group-id: DEFAULT_GROUP
+            ## 路由存储规则
+            rule-type: flow
+            ### 读取配置文件的 data-id
+            data-id: nacos-consumer
+            ### 读取配置文件类型为json
+            data-type: json

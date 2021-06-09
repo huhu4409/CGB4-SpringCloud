@@ -1,0 +1,37 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: sca-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #服务发现，同时当前服务也会注册到nacos
+    gateway:
+      discovery:
+        locator:
+          enabled: true #开启允许通过服务名id查找服务实例这个特性
+      routes:
+        - id: route01 #随意指定的一个值，路由的唯一标识
+          #uri: http://localhost:8081/ #一个服务的地址,路由指向的目的地 uri，即客户端请求最终被转发到的微服务
+          uri: lb://nacos-provider
+          predicates: ###谓词对象（定义访问规则）断言(谓词)的作用是进行条件判断，只有断言都返回真，才会执行路由。
+            - Path=/nacos/provider/echo/**  #判断请求的URI部分是否满足路径规则
+            #- After=2012-06-01T00:00:00.000+08:00[Asia/Shanghai]  #当且仅当请求时的时间After配置的时间时，才转发该请求
+            #- Method=GET #判断请求类型是否跟指定的类型匹配
+            #- RemoteAddr=192.168.126.1/24 #判断请求主机地址是否在指定地址段中
+          filters: ## gateway 作为一个入口处理所有请求 底层通过filter实现,过滤器用于修改请求和响应信息
+            - StripPrefix=1 # 去掉url中path部分的第一部分内容（前面两个"/"及之间的内容，例如nacos）
+    sentinel:
+      transport:
+        dashboard: localhost:8180 #sentinel 控制台地址
+        port: 8179 #客户端监控API的端口
+      eagger: true #取消Sentinel控制台懒加载,即项目启动即连接
+  zipkin:
+    base-url: localhost:9411
+  sleuth:
+    sampler:
+      probability: 0.1 #采样率，这里的0.1表示10%的数据进行采样
+logging:
+  level:
+    org.springframework.cloud.gateway: debug
